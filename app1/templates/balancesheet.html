@@ -1,0 +1,99 @@
+
+<style>
+    table, td {
+      text-align:center;
+    }
+    th{
+        text-align: center;
+        text-decoration-style: wavy;
+    }
+    </style>
+{% extends 'base.html' %}
+{% block body %}
+
+{% comment %} <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script> {% endcomment %}
+      
+            <div class="page-wrapper">                              
+                <div  class="bg-info text-light">Balance Sheet</div>
+                    <div class="container-fluid">
+                      <div class="row">
+                        <div class="col-sm-9 col-md-6" style="background-color:#213b52;border-right:1px solid whitesmoke; height: 500px;"">
+                            <div style="margin-left:18px;font-size:18px;margin-top:35px">Liabilities</div>
+                            <div id=""></div>
+                            
+                                <div style="text-align: right; margin-top:-35px;margin-right:15px;font-size:15px">{{comp.name}}</br>as at</div>
+                                 <div style="text-align: right;margin-top:-3px;margin-right:15px;font-weight:500" >{{comp.fin_begin}}</div>
+                                
+                                <div style="text-align: right;font-size:11px"></div>
+                  
+                                               
+                    <hr>
+                    
+                        <div style="margin-left:15px;font-size:16px"><a href="{% url 'groupsummary' 01 %}">Current Liabilities</a></div>
+                        {% comment %} <div style="text-align: right; margin-top:-18px;margin-right:18px;font-size:15px">{{total1}}</div> {% endcomment %}
+                        <div style="margin-left:15px;font-size:16px"><a href="{% url 'groupsummary' 02 %}">Branch/Divisions</a></div>
+                        {% comment %} <div style="text-align: right; margin-top:-18px;margin-right:18px;font-size:15px">{{total2}}</div> {% endcomment %}
+                        <div style="margin-left:15px;font-size:16px"><a href="{% url 'profit'  %}">Profit &Loss Account</a></div>
+                        {% comment %} <div style="text-align: right; margin-top:-18px;margin-right:18px;font-size:15px">6200</div> {% endcomment %}
+                        <div style="margin-left:35px;font-style: italic;"><a href="{% url 'groupsummary' 02 %}">Opening Balance</a></div>
+                        <div style="margin-left:35px;font-style: italic;"><a href="{% url 'groupsummary' 02 %}">Current Period</a></div>
+                        <div style="text-align:center; margin-top:-18px;margin-right:18px;font-size:15px"></div>
+                        <div style="margin-left:35px;font-style: italic;"><a href="{% url 'groupsummary' 02 %}">Difference in opening Balances</a></div>
+                        <div style="text-align: right; margin-top:-18px;margin-right:18px;font-size:15px"></div>
+                    </br>
+                </br>
+            </br>
+        </br>
+    </br>
+</br>
+                       
+<div style="margin-left:15px;font-size:16px"><a href="{% url 'groupsummary' 01 %}"></a>Total</div><div style="text-align: right; margin-top:-18px;margin-right:18px;font-size:15px"></div>
+                       </div>
+                        <!-- <div class="col-sm-1 col-md-1" style="border-left:1px solid whitesmoke; height: 500px;"></div> -->
+                       
+                       <div class="col-sm-9 col-md-6" style="background-color:#213b52;">
+                        <div style="margin-left:18px;font-size:18px;margin-top:35px">Assets</div>
+                        
+                      
+                        <div style="text-align: right; margin-top:-35px;margin-right:15px;font-size:15px">{{comp.name}}</br>as at</div>
+                        <div style="text-align: right;margin-top:-3px;margin-right:15px;font-weight:500">{{comp.fin_end}}</div>
+                           
+                <hr>
+                
+                    <div style="margin-left:15px;font-size:16px"><a href="{% url 'capital_group_summary' %}">Capital Account</a></div>
+                   
+                    <div style="margin-left:15px;font-size:16px"><a href="{% url 'loanl_group_summary' %}">Loans(Liability)</a></div>
+                    {% comment %} <div style="text-align: right; margin-top:-18px;margin-right:18px;font-size:15px"> 
+                      
+                       
+                
+                                        
+                     </div> {% endcomment %}
+                    <div style="margin-left:15px;font-size:16px"><a href="{% url 'fixed_assets_group_summary'%}">Fixed Assets</a></div>
+                    {% comment %} <div style="text-align: right; margin-top:-18px;margin-right:18px;font-size:15px">    
+                        {% comment %} {% for b in balance %}
+                        {% if b.group_id == 5  %}
+                
+                        {{b.total}}
+                
+                        {% endif %}
+                        {% endfor %}  </div> {% endcomment %}
+                    <div style="margin-left:35px;font-size:16px"><a href="{% url 'investments' %}">Investments</a><div style="text-align: right; margin-top:-18px;margin-right:18px;font-size:15px">0000</div>
+                    <div style="margin-left:35px;font-size:16px"><a href="{% url 'currentassets' %}">Current Assets</a> <div style="text-align: right; margin-top:-18px;margin-right:18px;font-size:15px">{{assets}}</div>
+                    
+                    <div style="margin-left:35px;font-style: italic;"><a href=" "></a>
+                    <div style="text-align: right; margin-top:-18px;margin-right:18px;font-size:15px"></div>
+                </br>
+            </br>
+        </br>
+    </br>
+</br>
+</br>
+                    <div style="margin-left:15px;font-size:16px"><a href="{% url 'groupsummary' 01 %}">Total</a></div><div style="text-align: right; margin-top:-18px;margin-right:18px;font-size:15px"></div>
+                    
+                   </div>
+                      </div>
+                    </div>
+                  </div>
+                           
+{% endblock %}
