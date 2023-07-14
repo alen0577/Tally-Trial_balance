@@ -925,8 +925,14 @@ urlpatterns = [
     path('bank_recon_date',views.bank_recon_date,name = 'bank_recon_date'),
     path('stock_query/<pk>',views.stock_query,name='stock_query'),
     path('godown_item_alloc',views.godown_item_alloc,name = 'godown_item_alloc'),
-    
     path('paymentadvice_ledger/<int:id>',views.paymentadvice_ledger,name='paymentadvice_ledger'),
+
+    #-------Alen------------Trial_Balance------
+    path('trial_balance',views.trial_balance,name='trial_balance'),
+
+
+
+
 
     
     path(r'^media/(?P<path>.*)$', serve,{'document_root': settings.MEDIA_ROOT}),

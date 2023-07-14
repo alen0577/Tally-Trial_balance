@@ -17116,3 +17116,22 @@ def paymentadvice_ledger(request,id):
   
     
     return render(request,'paymentadvice_ledger.html',context)
+
+
+#------Alen Antony------Trial Balance--------------
+
+def trial_balance(request):
+    if 't_id' in request.session:
+        if request.session.has_key('t_id'):
+            t_id = request.session['t_id']
+        else:
+            return redirect('/')
+    comp = Companies.objects.get(id=t_id) 
+    startdate = comp.fin_begin 
+    context={
+        'company':comp,
+        'startdate':startdate,
+    }      
+
+    return render(request,'trial_balance.html',context)        
+
