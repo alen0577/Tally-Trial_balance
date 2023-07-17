@@ -17135,3 +17135,52 @@ def trial_balance(request):
 
     return render(request,'trial_balance.html',context)        
 
+
+def trialbalance_group_summary(request):
+    if 't_id' in request.session:
+        if request.session.has_key('t_id'):
+            t_id = request.session['t_id']
+        else:
+            return redirect('/')
+    comp = Companies.objects.get(id=t_id) 
+    startdate = comp.fin_begin 
+    context={
+        'company':comp,
+        'startdate':startdate,
+    }      
+
+    return render(request,'trialbalance_group_summary.html',context)        
+
+
+def trialbalance_ledger_month_summary(request):
+    if 't_id' in request.session:
+        if request.session.has_key('t_id'):
+            t_id = request.session['t_id']
+        else:
+            return redirect('/')
+    comp = Companies.objects.get(id=t_id) 
+    startdate = comp.fin_begin 
+    context={
+        'company':comp,
+        'startdate':startdate,
+    }      
+
+    return render(request,'trialbalance_ledger_month_summary.html',context)
+
+
+def trialbalance_ledger_vouchers(request):
+    if 't_id' in request.session:
+        if request.session.has_key('t_id'):
+            t_id = request.session['t_id']
+        else:
+            return redirect('/')
+    comp = Companies.objects.get(id=t_id) 
+    startdate = comp.fin_begin 
+    context={
+        'company':comp,
+        'startdate':startdate,
+    }      
+
+    return render(request,'trialbalance_ledger_vouchers.html',context)   
+             
+

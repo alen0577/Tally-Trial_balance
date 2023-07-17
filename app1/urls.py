@@ -928,7 +928,11 @@ urlpatterns = [
     path('paymentadvice_ledger/<int:id>',views.paymentadvice_ledger,name='paymentadvice_ledger'),
 
     #-------Alen------------Trial_Balance------
-    path('trial_balance',views.trial_balance,name='trial_balance'),
+    path('trial_balance/',views.trial_balance,name='trial_balance'),
+    path('trialbalance_group_summary/',views.trialbalance_group_summary,name='trialbalance_group_summary'),
+    path('trialbalance_ledger_month_summary/',views.trialbalance_ledger_month_summary,name='trialbalance_ledger_month_summary'),
+    path('trialbalance_ledger_vouchers/',views.trialbalance_ledger_vouchers,name='trialbalance_ledger_vouchers'),
+
 
 
 
