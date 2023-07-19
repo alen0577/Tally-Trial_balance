@@ -17128,9 +17128,11 @@ def trial_balance(request):
             return redirect('/')
     comp = Companies.objects.get(id=t_id) 
     startdate = comp.fin_begin 
+    ledgers = tally_ledger.objects.filter(company_id=t_id)
     context={
         'company':comp,
         'startdate':startdate,
+        'ledgers':ledgers,
     }      
 
     return render(request,'trial_balance.html',context)        

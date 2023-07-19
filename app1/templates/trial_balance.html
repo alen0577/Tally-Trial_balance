@@ -29,18 +29,20 @@
             </tr>
           </thead>
           <tbody>
-              
+             
+            {% for i in ledgers %}
             <tr  class="trhover">                               
-                <td class="text-white"><a href=""></a></td>
-                <td class="text-center text-white"></td>
-                <td class="text-center text-white"></td>
+              <td class="text-white"><a href=""></a>{{i.under}}</td>
+              <td class="text-center text-white"></td>
+              <td class="text-center text-white"></td>
             </tr>
+            {% endfor %}
             
           
             <tr>
-                <th class="text-white">Grand Total</th>
-                <th class="text-center text-white">{{ sum2 }}</th>
-                <th class="text-center text-white">{{ sum1 }}</th>
+              <th class="text-white">Grand Total</th>
+              <th class="text-center text-white">{{ sum2 }}</th>
+              <th class="text-center text-white">{{ sum1 }}</th>
             </tr>
             
           </tbody>
