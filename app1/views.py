@@ -17129,10 +17129,31 @@ def trial_balance(request):
     comp = Companies.objects.get(id=t_id) 
     startdate = comp.fin_begin 
     ledgers = tally_ledger.objects.filter(company_id=t_id)
+    
+    # fetch distinct values of group_under and opening balance type
+    distinct_group=tally_ledger.objects.filter(company_id=t_id).values('under','opening_blnc_type').distinct()
+    print(distinct_group)
+    
+    # find total of opening balance of all distinct group_under
+    grop_under_data=[]
+    for group in distinct_group:
+        grpname=group['under']
+        group_name=group['under'].replace('_', ' ')
+        total_opening_balance=tally_ledger.objects.filter(company_id=t_id,under=grpname).aggregate(total_balance=Sum('opening_blnc'))
+        balance_type=group['opening_blnc_type']
+        grop_under_data.append({
+            'group_name':group_name,
+            'total_opening_balance':total_opening_balance['total_balance'],
+            'balance_type':balance_type,
+        })
+
+    print(grop_under_data)   
     context={
         'company':comp,
         'startdate':startdate,
         'ledgers':ledgers,
+        'grop_under_data':grop_under_data,
+
     }      
 
     return render(request,'trial_balance.html',context)        
