@@ -17147,12 +17147,28 @@ def trial_balance(request):
             'balance_type':balance_type,
         })
 
-    print(grop_under_data)   
+    t_debit=0
+    t_credit=0
+
+    for i in   grop_under_data:
+        
+        if i['balance_type'] == 'Dr':
+            t_debit += i['total_opening_balance']
+
+        else:
+            t_credit += i['total_opening_balance']
+
+
+
+    print(grop_under_data)
+    print(t_credit,t_debit)   
     context={
         'company':comp,
         'startdate':startdate,
         'ledgers':ledgers,
         'grop_under_data':grop_under_data,
+        't_debit':t_debit,
+        't_credit':t_credit,
 
     }      
 

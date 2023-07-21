@@ -29,16 +29,16 @@
           </thead>
           <tbody>
              
-            {% for i in ledgers %}
+            {% for i in grop_under_data %}
             <tr  class="trhover">                               
-              <td class="text-white"><a href=""></a>{{i.under}}</td>
-              {% if i.opening_blnc_type == "Dr" %}
-              <td class="text-center text-white">{{i.opening_blnc}}</td>
+              <td class="text-white"><a href=""></a>{{i.group_name}}</td>
+              {% if i.balance_type == "Dr" %}
+              <td class="text-center text-white">{{i.total_opening_balance}}</td>
               {% else %}
               <td class="text-center text-white"></td>
               {% endif %}
-              {% if i.opening_blnc_type == "Cr" %}
-              <td class="text-center text-white">{{i.opening_blnc}}</td>
+              {% if i.balance_type == "Cr" %}
+              <td class="text-center text-white">{{i.total_opening_balance}}</td>
               {% else %}
               <td class="text-center text-white"></td>
               {% endif %}
@@ -50,8 +50,8 @@
           
             <tr>
               <th class="text-white">Grand Total</th>
-              <th class="text-center text-white">{{ sum2 }}</th>
-              <th class="text-center text-white">{{ sum1 }}</th>
+              <th class="text-center text-white">{{ t_debit }}</th>
+              <th class="text-center text-white">{{ t_credit }}</th>
             </tr>
             
           </tbody>
