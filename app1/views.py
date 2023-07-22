@@ -40,6 +40,7 @@ from unittest import TextTestRunner
 from django.db.models import Q
 from django.db.models import Avg,Max,Min,Sum
 from django.conf import settings
+import locale
 
 # Create your views here.
 
@@ -17120,6 +17121,15 @@ def paymentadvice_ledger(request,id):
 
 #------Alen Antony------Trial Balance--------------
 
+def indian_money_format(number):
+    try:
+        locale.setlocale(locale.LC_ALL, 'en_IN')  # Set the Indian locale
+    except locale.Error:
+        pass  # If the Indian locale is not available, it'll raise an error, so ignore it
+    return locale.format_string("%.2f", number, grouping=True)
+
+
+
 def trial_balance(request):
     if 't_id' in request.session:
         if request.session.has_key('t_id'):
@@ -17147,28 +17157,63 @@ def trial_balance(request):
             'balance_type':balance_type,
         })
 
+
     t_debit=0
     t_credit=0
+    tc_dif=0
+    td_dif=0
+    total=0
+
 
     for i in   grop_under_data:
         
         if i['balance_type'] == 'Dr':
             t_debit += i['total_opening_balance']
+            
 
         else:
             t_credit += i['total_opening_balance']
+            
 
+    
+
+    if t_debit>t_credit:
+        tc_dif=t_debit-t_credit
+        total=t_debit
+
+    else:
+        td_dif=t_credit-t_debit
+        total=t_credit
+    
+
+    # for converting the number to indian money format
+
+    for item in grop_under_data:
+        item['total_opening_balance'] = indian_money_format(item['total_opening_balance'])
+    tc_diff=indian_money_format(tc_dif)
+    td_diff=indian_money_format(td_dif)
+    formated_total=indian_money_format(total)
 
 
     print(grop_under_data)
-    print(t_credit,t_debit)   
+    print(t_credit,t_debit)
+    print(tc_diff,td_diff,formated_total) 
+    
+   
+
     context={
+
         'company':comp,
         'startdate':startdate,
         'ledgers':ledgers,
         'grop_under_data':grop_under_data,
         't_debit':t_debit,
         't_credit':t_credit,
+        'tc_diff':tc_diff,
+        'td_diff':td_diff,
+        'tc_dif':tc_dif,
+        'td_dif':td_dif,
+        'formated_total':formated_total,
 
     }      
 

@@ -16,29 +16,29 @@
         <table class="table  table-bordered border-dark " style="background-color: rgba(33,57,77,255);color:#fff;">
           <thead>
             <tr>
-              <th rowspan="6"  class="align-middle text-white">Particulars</th>
+              <td rowspan="6"  class="align-middle text-white">Particulars</td>
               <th colspan="6" class="text-center text-white"><h5>{{company.name}}</h5><h6>For {{startdate  |date:'d-M-Y'}}</h6></th>
             </tr>
             <tr>
               <th colspan="6" class="text-center text-white">Closing Balance</th>
             </tr>
             <tr>
-              <th class="text-center text-white">Debit</th>
-              <th class="text-center text-white">Credit</th>
+              <td class="text-center text-white">Debit</td>
+              <td class="text-center text-white">Credit</td>
             </tr>
           </thead>
           <tbody>
              
             {% for i in grop_under_data %}
             <tr  class="trhover">                               
-              <td class="text-white"><a href=""></a>{{i.group_name}}</td>
+              <th class="text-white"><a href="{% url 'trialbalance_group_summary' %}">{{i.group_name}}</a></th>
               {% if i.balance_type == "Dr" %}
-              <td class="text-center text-white">{{i.total_opening_balance}}</td>
+              <th class="text-center text-white">{{i.total_opening_balance}}</th>
               {% else %}
               <td class="text-center text-white"></td>
               {% endif %}
               {% if i.balance_type == "Cr" %}
-              <td class="text-center text-white">{{i.total_opening_balance}}</td>
+              <th class="text-center text-white">{{i.total_opening_balance}}</th>
               {% else %}
               <td class="text-center text-white"></td>
               {% endif %}
@@ -46,12 +46,38 @@
 
             </tr>
             {% endfor %}
+
+            {% if t_debit != t_credit %}
+            <tr class="trhover">
+
+              <td class=" text-white" style="font-family: cursive;">Difference in opening balances</td>
+
+              {% if td_dif %}
+              <td class="text-center text-white">{{td_diff}}</td>
+              {% else %}
+              <td class="text-center text-white"></td>
+              {% endif %}
+              
+              {% if not tc_dif %}
+              <td class="text-center text-white"></td>
+              {% else %}
+              <td class="text-center text-white">{{tc_diff}}</td>
+              {% endif %}
+              
+
+              
+              
+              
+
+
+            </tr>
+            {% endif %}
             
           
             <tr>
               <th class="text-white">Grand Total</th>
-              <th class="text-center text-white">{{ t_debit }}</th>
-              <th class="text-center text-white">{{ t_credit }}</th>
+              <th class="text-center text-white">{{ formated_total }}</th>
+              <th class="text-center text-white">{{ formated_total }}</th>
             </tr>
             
           </tbody>
@@ -62,9 +88,12 @@
 </div>
 
 <style>
-    .trhover:hover{
-        background-color: rgb(31, 40, 68);
-    }
+  body{
+    font-family: Arial, Helvetica, sans-serif;
+  }
+  .trhover:hover{
+    background-color: rgb(0, 12, 48);
+  }
 </style>
 {% endblock %}
 
