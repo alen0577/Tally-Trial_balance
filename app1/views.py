@@ -42,6 +42,7 @@ from django.db.models import Avg,Max,Min,Sum
 from django.conf import settings
 import locale
 
+
 # Create your views here.
 
 def login(request):
@@ -17220,7 +17221,7 @@ def trial_balance(request):
     return render(request,'trial_balance.html',context)        
 
 
-def trialbalance_group_summary(request):
+def trialbalance_group_summary(request,pk):
     if 't_id' in request.session:
         if request.session.has_key('t_id'):
             t_id = request.session['t_id']
@@ -17228,15 +17229,48 @@ def trialbalance_group_summary(request):
             return redirect('/')
     comp = Companies.objects.get(id=t_id) 
     startdate = comp.fin_begin 
+    
+    words=pk.split()
+    pk1 = "_".join(words)
+    
+    
+    ledgers=tally_ledger.objects.filter(company_id=t_id,under=pk1)
+
+    #find total of balances
+    total_debit=0
+    total_credit=0
+    for t in ledgers:
+        if t.opening_blnc_type == 'Dr':
+            total_debit+=t.opening_blnc
+        else:
+            total_credit+=t.opening_blnc    
+
+    # convert to indian money format
+    for i in ledgers:
+        i.opening_blnc=indian_money_format(i.opening_blnc)
+        print(i.opening_blnc)
+
+    d_total=indian_money_format(total_debit)
+    c_total=indian_money_format(total_credit)
+
+    print(words,pk1,total_debit,total_credit)
+    print(ledgers)
+
     context={
         'company':comp,
         'startdate':startdate,
+        'pk':pk,
+        'ledgers':ledgers,
+        'total_debit':total_debit,
+        'total_credit':total_credit,
+        'd_total': d_total,
+        'c_total': c_total,
     }      
 
     return render(request,'trialbalance_group_summary.html',context)        
 
 
-def trialbalance_ledger_month_summary(request):
+def trialbalance_ledger_month_summary(request,pk):
     if 't_id' in request.session:
         if request.session.has_key('t_id'):
             t_id = request.session['t_id']
@@ -17247,6 +17281,7 @@ def trialbalance_ledger_month_summary(request):
     context={
         'company':comp,
         'startdate':startdate,
+        'pk':pk
     }      
 
     return render(request,'trialbalance_ledger_month_summary.html',context)

@@ -31,7 +31,7 @@
              
             {% for i in grop_under_data %}
             <tr  class="trhover">                               
-              <th class="text-white"><a href="{% url 'trialbalance_group_summary' %}">{{i.group_name}}</a></th>
+              <th class="text-white"><a href="{% url 'trialbalance_group_summary' i.group_name %}">{{i.group_name}}</a></th>
               {% if i.balance_type == "Dr" %}
               <th class="text-center text-white">{{i.total_opening_balance}}</th>
               {% else %}

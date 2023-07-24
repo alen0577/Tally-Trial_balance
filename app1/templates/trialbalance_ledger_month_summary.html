@@ -18,25 +18,32 @@
           <thead>
             <tr>
               <th rowspan="6"  class="align-middle text-white">Particulars</th>
-              <th colspan="6" class="text-center text-white"><h5>{{company.name}}</h5><h6>For {{startdate  |date:'d-M-Y'}}</h6></th>
+              <th colspan="6" class="text-center text-white"><h6>{{pk}}</h6><h5>{{company.name}}</h5><h6>For {{startdate  |date:'d-M-Y'}}</h6></th>
             </tr>
             <tr>
               <th colspan="2" class="text-center text-white">Transactions</th>
               
             </tr>
             <tr>
-              <th class="text-center text-white">Debit</th>
-              <th class="text-center text-white">Credit</th>
+              <td class="text-center text-white">Debit</td>
+              <td class="text-center text-white">Credit</td>
               <th rowspan="3" class="text-center text-white" style="border-top: none;">Closing Balance</th>
             </tr>
           </thead>
           <tbody>
               
-            <tr  class="trhover">                               
-              <td class="text-white"><a href=""></a></td>
+            <tr>                               
+              <td class="text-white" style="font-family: cursive;">Opening Balance</td>
               <td class="text-center text-white"></td>
               <td class="text-center text-white"></td>
-              <td class="text-center text-white"></td>  
+              <th class="text-center text-white">20000</th>  
+            </tr>
+
+            <tr class="trhover">                               
+              <td class="text-white"></td>
+              <td class="text-center text-white"></td>
+              <td class="text-center text-white"></td>
+              <th class="text-center text-white"></th>  
             </tr>
             
           
@@ -55,8 +62,11 @@
 </div>
 
 <style>
-    .trhover:hover{
-        background-color: rgb(31, 40, 68);
-    }
+  body{
+    font-family: Arial, Helvetica, sans-serif;
+  }
+  .trhover:hover{
+    background-color: rgb(0, 12, 48);
+  }
 </style>
 {% endblock %}
