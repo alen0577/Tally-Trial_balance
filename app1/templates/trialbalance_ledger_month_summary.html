@@ -36,22 +36,28 @@
               <td class="text-white" style="font-family: cursive;">Opening Balance</td>
               <td class="text-center text-white"></td>
               <td class="text-center text-white"></td>
-              <th class="text-center text-white">20000</th>  
+              <th class="text-center text-white">{{ledger.opening_blnc}} {{ledger.opening_blnc_type}}</th>  
             </tr>
-
+            {% for i in table_months %}
             <tr class="trhover">                               
-              <td class="text-white"></td>
+              <td class="text-white"><a href="{% url 'trialbalance_ledger_vouchers' %}">{{i}}</a></td>
               <td class="text-center text-white"></td>
               <td class="text-center text-white"></td>
-              <th class="text-center text-white"></th>  
+
+              {% if i == month %}
+              <td class="text-center text-white">{{ledger.opening_blnc}} {{ledger.opening_blnc_type}}</td>
+              {% else %}
+              <td class="text-center text-white"></td>
+              {% endif %}
+
             </tr>
-            
+            {% endfor %}
           
             <tr>
               <th class="text-white">Grand Total</th>
-              <th class="text-center text-white">{{ sum2 }}</th>
-              <th class="text-center text-white">{{ sum1 }}</th>
-              <th class="text-center text-white">{{ sum1 }}</th>
+              <th class="text-center text-white"></th>
+              <th class="text-center text-white"></th>
+              <th class="text-center text-white">{{ledger.opening_blnc}} {{ledger.opening_blnc_type}}</th>
             </tr>
             
           </tbody>

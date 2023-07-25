@@ -17277,11 +17277,34 @@ def trialbalance_ledger_month_summary(request,pk):
         else:
             return redirect('/')
     comp = Companies.objects.get(id=t_id) 
-    startdate = comp.fin_begin 
+    startdate = comp.fin_begin
+    today=date.today()
+    
+    
+    ledger=tally_ledger.objects.get(name=pk,company_id=t_id)
+
+    months = [
+        'February', 'March', 'April', 'May', 'June', 'July', 
+        'August', 'September', 'October', 'November', 'December','January'
+    ]
+
+    start_month_index = (startdate.month - 2) % 12
+
+    table_months = months[start_month_index:] + months[:start_month_index]
+    month=months[start_month_index]
+
+    #convert to indian money format
+    ledger.opening_blnc=indian_money_format(ledger.opening_blnc)
+
+    print(ledger,startdate,start_month_index,month)
+    print(table_months)
     context={
         'company':comp,
         'startdate':startdate,
-        'pk':pk
+        'pk':pk,
+        'ledger':ledger,
+        'table_months':table_months,
+        'month':month,
     }      
 
     return render(request,'trialbalance_ledger_month_summary.html',context)
