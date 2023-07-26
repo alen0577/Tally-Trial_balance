@@ -17281,7 +17281,7 @@ def trialbalance_ledger_month_summary(request,pk):
     today=date.today()
     
     
-    ledger=tally_ledger.objects.get(name=pk,company_id=t_id)
+    ledger=tally_ledger.objects.get(id=pk,company_id=t_id)
 
     months = [
         'February', 'March', 'April', 'May', 'June', 'July', 
