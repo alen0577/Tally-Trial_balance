@@ -17310,7 +17310,7 @@ def trialbalance_ledger_month_summary(request,pk):
     return render(request,'trialbalance_ledger_month_summary.html',context)
 
 
-def trialbalance_ledger_vouchers(request):
+def trialbalance_ledger_vouchers(request,id,pk):
     if 't_id' in request.session:
         if request.session.has_key('t_id'):
             t_id = request.session['t_id']
@@ -17318,9 +17318,12 @@ def trialbalance_ledger_vouchers(request):
             return redirect('/')
     comp = Companies.objects.get(id=t_id) 
     startdate = comp.fin_begin 
+
+    ledger=tally_ledger.objects.get(id=id,company_id=t_id)
     context={
         'company':comp,
         'startdate':startdate,
+        'ledger':ledger,
     }      
 
     return render(request,'trialbalance_ledger_vouchers.html',context)   

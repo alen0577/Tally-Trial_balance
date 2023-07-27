@@ -40,7 +40,7 @@
             </tr>
             {% for i in table_months %}
             <tr class="trhover">                               
-              <td class="text-white"><a href="{% url 'trialbalance_ledger_vouchers' %}">{{i}}</a></td>
+              <td class="text-white"><a href="{% url 'trialbalance_ledger_vouchers' ledger.id i %}">{{i}}</a></td>
               <td class="text-center text-white"></td>
               <td class="text-center text-white"></td>
 
