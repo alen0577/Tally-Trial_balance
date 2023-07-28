@@ -17120,7 +17120,9 @@ def paymentadvice_ledger(request,id):
     return render(request,'paymentadvice_ledger.html',context)
 
 
+
 #------Alen Antony------Trial Balance--------------
+
 
 def indian_money_format(number):
     try:
@@ -17128,6 +17130,7 @@ def indian_money_format(number):
     except locale.Error:
         pass  # If the Indian locale is not available, it'll raise an error, so ignore it
     return locale.format_string("%.2f", number, grouping=True)
+
 
 
 
@@ -17143,7 +17146,7 @@ def trial_balance(request):
     
     # fetch distinct values of group_under and opening balance type
     distinct_group=tally_ledger.objects.filter(company_id=t_id).values('under','opening_blnc_type').distinct()
-    print(distinct_group)
+    
     
     # find total of opening balance of all distinct group_under
     grop_under_data=[]
@@ -17196,9 +17199,7 @@ def trial_balance(request):
     formated_total=indian_money_format(total)
 
 
-    print(grop_under_data)
-    print(t_credit,t_debit)
-    print(tc_diff,td_diff,formated_total) 
+    
     
    
 
@@ -17219,6 +17220,8 @@ def trial_balance(request):
     }      
 
     return render(request,'trial_balance.html',context)        
+
+
 
 
 def trialbalance_group_summary(request,pk):
@@ -17248,13 +17251,12 @@ def trialbalance_group_summary(request,pk):
     # convert to indian money format
     for i in ledgers:
         i.opening_blnc=indian_money_format(i.opening_blnc)
-        print(i.opening_blnc)
+       
 
     d_total=indian_money_format(total_debit)
     c_total=indian_money_format(total_credit)
 
-    print(words,pk1,total_debit,total_credit)
-    print(ledgers)
+    
 
     context={
         'company':comp,
@@ -17268,6 +17270,8 @@ def trialbalance_group_summary(request,pk):
     }      
 
     return render(request,'trialbalance_group_summary.html',context)        
+
+
 
 
 def trialbalance_ledger_month_summary(request,pk):
@@ -17296,8 +17300,7 @@ def trialbalance_ledger_month_summary(request,pk):
     #convert to indian money format
     ledger.opening_blnc=indian_money_format(ledger.opening_blnc)
 
-    print(ledger,startdate,start_month_index,month)
-    print(table_months)
+   
     context={
         'company':comp,
         'startdate':startdate,
@@ -17308,6 +17311,9 @@ def trialbalance_ledger_month_summary(request,pk):
     }      
 
     return render(request,'trialbalance_ledger_month_summary.html',context)
+
+
+
 
 
 def trialbalance_ledger_vouchers(request,id,pk):
@@ -17326,6 +17332,6 @@ def trialbalance_ledger_vouchers(request,id,pk):
         'ledger':ledger,
     }      
 
-    return render(request,'trialbalance_ledger_vouchers.html',context)   
+    return render(request,'trialbalance_ledger_vouchers.html',context)  
              
 
