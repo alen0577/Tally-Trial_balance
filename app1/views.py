@@ -17333,5 +17333,24 @@ def trialbalance_ledger_vouchers(request,id,pk):
     }      
 
     return render(request,'trialbalance_ledger_vouchers.html',context)  
+
+
+def trialbalance_voucher_alter(request):
+    if 't_id' in request.session:
+        if request.session.has_key('t_id'):
+            t_id = request.session['t_id']
+        else:
+            return redirect('/')
+    comp = Companies.objects.get(id=t_id) 
+    startdate = comp.fin_begin 
+
+    
+    context={
+        'company':comp,
+        'startdate':startdate,
+        'ledger':ledger,
+    }      
+
+    return render(request,'trialbalance_voucher_alter.html',context)  
              
 
