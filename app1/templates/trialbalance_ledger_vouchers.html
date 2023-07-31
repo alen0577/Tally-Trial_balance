@@ -14,8 +14,8 @@
         </div> 
       </div>
       <div class="row d-flex mt-3 mb-3 " >
-        <div class="col-10 ">Ledger : {{ledger.name}}</div>
-        <div class="col-2" style="font-weight:600 ;text-transform:capitalize;">{{startdate  |date:'d-M-Y'}} to 30-Apr-2023</div>
+        <div class="col-md-10 ">Ledger : {{ledger.name}}</div>
+        <div class="col-md-2" style="font-weight:600 ;text-transform:capitalize;">{{startdate  |date:'d-M-Y'}} to 30-Apr-2023</div>
         
       </div>
 
@@ -67,8 +67,11 @@
 </div>
 
 <style>
-    .trhover:hover{
-        background-color: rgb(31, 40, 68);
-    }
+  body{
+    font-family: Arial, Helvetica, sans-serif;
+  }
+  .trhover:hover{
+    background-color: rgb(31, 40, 68);
+  }
 </style>
 {% endblock %}

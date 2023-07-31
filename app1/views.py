@@ -17343,11 +17343,13 @@ def trialbalance_voucher_alter(request):
             return redirect('/')
     comp = Companies.objects.get(id=t_id) 
     startdate = comp.fin_begin 
+    day = startdate.strftime("%A")
 
-    
+    print(startdate,day)
     context={
         'company':comp,
         'startdate':startdate,
+        'day':day,
         'ledger':ledger,
     }      
 
