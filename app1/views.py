@@ -41,6 +41,7 @@ from django.db.models import Q
 from django.db.models import Avg,Max,Min,Sum
 from django.conf import settings
 import locale
+from django.utils import timezone
 
 
 # Create your views here.
@@ -17131,6 +17132,26 @@ def indian_money_format(number):
         pass  # If the Indian locale is not available, it'll raise an error, so ignore it
     return locale.format_string("%.2f", number, grouping=True)
 
+def get_first_and_last_days_of_months(start_date, end_date):
+    current_date = start_date
+    result = []
+    while current_date <= end_date:
+        first_day = current_date.replace(day=1)
+        last_day = (current_date.replace(day=28) + timedelta(days=4)).replace(day=1) - timedelta(days=1)
+
+        result.append({
+            'first_day': first_day,
+            'last_day': last_day
+        })
+
+        # Move to the next month
+        if current_date.month == 12:
+            current_date = current_date.replace(year=current_date.year + 1, month=1)
+        else:
+            current_date = current_date.replace(month=current_date.month + 1)
+
+    return result
+
 
 
 
@@ -17323,13 +17344,40 @@ def trialbalance_ledger_vouchers(request,id,pk):
         else:
             return redirect('/')
     comp = Companies.objects.get(id=t_id) 
-    startdate = comp.fin_begin 
+    start_date = comp.fin_begin
+    end_date = comp.fin_end
+    month=pk 
+    months_list = get_first_and_last_days_of_months(start_date, end_date)
+
+    def get_first_and_last_date_of_month(month_name):
+        # Convert month name to numeric value
+        month_number = datetime.strptime(month_name, "%B").month
+        
+        # Find the dictionary that matches the given month
+        selected_month_range = next((dr for dr in months_list if dr['first_day'].month == month_number), None)
+        
+        if selected_month_range:
+            return selected_month_range['first_day'], selected_month_range['last_day']
+        else:
+            # Handle the case when the given month is not found in the list
+            return None, None
+    
+    first_day, last_day = get_first_and_last_date_of_month(month)
+
+    print(first_day, last_day)
+
+
+
 
     ledger=tally_ledger.objects.get(id=id,company_id=t_id)
+    print(month,end_date)
+    print(months_list)
     context={
         'company':comp,
-        'startdate':startdate,
+        'start_date':start_date,
         'ledger':ledger,
+        'first_day':first_day,
+        'last_day':last_day,
     }      
 
     return render(request,'trialbalance_ledger_vouchers.html',context)  
