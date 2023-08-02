@@ -41,6 +41,7 @@ from django.db.models import Q
 from django.db.models import Avg,Max,Min,Sum
 from django.conf import settings
 import locale
+from collections import defaultdict
 from django.utils import timezone
 
 
@@ -17167,7 +17168,59 @@ def trial_balance(request):
     
     # fetch distinct values of group_under and opening balance type
     distinct_group=tally_ledger.objects.filter(company_id=t_id).values('under','opening_blnc_type').distinct()
-    
+#one    
+    unique_keys = {}
+
+    for entry in distinct_group:
+        key = entry['under']
+        balance_type = entry['opening_blnc_type']
+
+        if key in unique_keys:
+            # If the key is already present, check if the balance type is different
+            if unique_keys[key] != balance_type:
+                # If the balance type is different, update the existing entry with both balance types
+                unique_keys[key] = f"{unique_keys[key]} and {balance_type}"
+        else:
+            # If the key is not present, add it to the dictionary
+            unique_keys[key] = balance_type
+
+        
+#two
+    data_dict = defaultdict(lambda: {'Dr': [], 'Cr': []})
+
+    # Loop through the original list and populate the dictionary
+    for item in distinct_group:
+        key = item['under']
+        balance_type = item['opening_blnc_type']
+        data_dict[key][balance_type].append(item)
+
+    # Separate the data with different balance types
+    distinct_data = []
+    for key, values in data_dict.items():
+        if len(values['Dr']) > 0 and len(values['Cr']) > 0:
+            distinct_data.extend(values['Dr'])
+            distinct_data.extend(values['Cr'])
+
+
+#three
+    distinct_keys = {}
+
+    # Iterate through the list
+    for entry in distinct_group:
+        key = entry['under']
+        balance_type = entry['opening_blnc_type']
+        
+        if key not in distinct_keys:
+            # If the key is not present in the dictionary, add it with the balance type
+            distinct_keys[key] = [balance_type]
+        else:
+            # If the key is already present, check if the balance type is different
+            if balance_type not in distinct_keys[key]:
+                # If the balance type is different, add it to the existing key entry
+                distinct_keys[key].append(balance_type)
+
+
+
     
     # find total of opening balance of all distinct group_under
     grop_under_data=[]
@@ -17182,7 +17235,7 @@ def trial_balance(request):
             'balance_type':balance_type,
         })
 
-
+    
     t_debit=0
     t_credit=0
     tc_dif=0
@@ -17209,8 +17262,11 @@ def trial_balance(request):
     else:
         td_dif=t_credit-t_debit
         total=t_credit
-    
-
+    print(distinct_keys)
+    print(distinct_data)    
+    print(unique_keys)
+    print(distinct_group)
+    print(grop_under_data)
     # for converting the number to indian money format
 
     for item in grop_under_data:
