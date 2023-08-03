@@ -32,16 +32,13 @@
             {% for i in grop_under_data %}
             <tr  class="trhover">                               
               <th class="text-white"><a href="{% url 'trialbalance_group_summary' i.group_name %}">{{i.group_name}}</a></th>
-              {% if i.balance_type == "Dr" %}
-              <th class="text-center text-white">{{i.total_opening_balance}}</th>
-              {% else %}
-              <td class="text-center text-white"></td>
-              {% endif %}
-              {% if i.balance_type == "Cr" %}
-              <th class="text-center text-white">{{i.total_opening_balance}}</th>
-              {% else %}
-              <td class="text-center text-white"></td>
-              {% endif %}
+              
+              <th class="text-center text-white">{{i.total_closing_balancedb}}</th>
+              
+              
+              
+              <th class="text-center text-white">{{i.total_closing_balancecr}}</th>
+              
               
 
             </tr>

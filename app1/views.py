@@ -17133,6 +17133,7 @@ def indian_money_format(number):
         pass  # If the Indian locale is not available, it'll raise an error, so ignore it
     return locale.format_string("%.2f", number, grouping=True)
 
+
 def get_first_and_last_days_of_months(start_date, end_date):
     current_date = start_date
     result = []
@@ -17166,75 +17167,31 @@ def trial_balance(request):
     startdate = comp.fin_begin 
     ledgers = tally_ledger.objects.filter(company_id=t_id)
     
-    # fetch distinct values of group_under and opening balance type
-    distinct_group=tally_ledger.objects.filter(company_id=t_id).values('under','opening_blnc_type').distinct()
-#one    
-    unique_keys = {}
+    # fetch distinct values of group_under
+    distinct_group=tally_ledger.objects.filter(company_id=t_id).values('under').distinct()
 
-    for entry in distinct_group:
-        key = entry['under']
-        balance_type = entry['opening_blnc_type']
-
-        if key in unique_keys:
-            # If the key is already present, check if the balance type is different
-            if unique_keys[key] != balance_type:
-                # If the balance type is different, update the existing entry with both balance types
-                unique_keys[key] = f"{unique_keys[key]} and {balance_type}"
-        else:
-            # If the key is not present, add it to the dictionary
-            unique_keys[key] = balance_type
-
-        
-#two
-    data_dict = defaultdict(lambda: {'Dr': [], 'Cr': []})
-
-    # Loop through the original list and populate the dictionary
-    for item in distinct_group:
-        key = item['under']
-        balance_type = item['opening_blnc_type']
-        data_dict[key][balance_type].append(item)
-
-    # Separate the data with different balance types
-    distinct_data = []
-    for key, values in data_dict.items():
-        if len(values['Dr']) > 0 and len(values['Cr']) > 0:
-            distinct_data.extend(values['Dr'])
-            distinct_data.extend(values['Cr'])
-
-
-#three
-    distinct_keys = {}
-
-    # Iterate through the list
-    for entry in distinct_group:
-        key = entry['under']
-        balance_type = entry['opening_blnc_type']
-        
-        if key not in distinct_keys:
-            # If the key is not present in the dictionary, add it with the balance type
-            distinct_keys[key] = [balance_type]
-        else:
-            # If the key is already present, check if the balance type is different
-            if balance_type not in distinct_keys[key]:
-                # If the balance type is different, add it to the existing key entry
-                distinct_keys[key].append(balance_type)
-
+    
 
 
     
-    # find total of opening balance of all distinct group_under
+    # find total closing balance of all distinct group_under
     grop_under_data=[]
     for group in distinct_group:
         grpname=group['under']
         group_name=group['under'].replace('_', ' ')
-        total_opening_balance=tally_ledger.objects.filter(company_id=t_id,under=grpname).aggregate(total_balance=Sum('opening_blnc'))
-        balance_type=group['opening_blnc_type']
+        total_closing_balancedb=tally_ledger.objects.filter(company_id=t_id,under=grpname,current_blnc_type='Dr').aggregate(total_balance=Sum('current_blnc'))
+        total_closing_balancecr=tally_ledger.objects.filter(company_id=t_id,under=grpname,current_blnc_type='Cr').aggregate(total_balance=Sum('current_blnc'))
+       
+        print(total_closing_balancedb)
+        print(total_closing_balancecr)
         grop_under_data.append({
             'group_name':group_name,
-            'total_opening_balance':total_opening_balance['total_balance'],
-            'balance_type':balance_type,
+            'total_closing_balancedb':total_closing_balancedb['total_balance'],
+            'total_closing_balancecr':total_closing_balancecr['total_balance'],
+            
         })
 
+    
     
     t_debit=0
     t_credit=0
@@ -17245,12 +17202,10 @@ def trial_balance(request):
 
     for i in   grop_under_data:
         
-        if i['balance_type'] == 'Dr':
-            t_debit += i['total_opening_balance']
-            
-
-        else:
-            t_credit += i['total_opening_balance']
+        if i['total_closing_balancedb']:
+            t_debit += i['total_closing_balancedb']
+        else:    
+            t_credit += i['total_closing_balancecr']
             
 
     
@@ -17262,15 +17217,22 @@ def trial_balance(request):
     else:
         td_dif=t_credit-t_debit
         total=t_credit
-    print(distinct_keys)
-    print(distinct_data)    
-    print(unique_keys)
-    print(distinct_group)
+
+
+   
     print(grop_under_data)
+
     # for converting the number to indian money format
 
     for item in grop_under_data:
-        item['total_opening_balance'] = indian_money_format(item['total_opening_balance'])
+        if item['total_closing_balancedb'] and item['total_closing_balancecr']:
+            item['total_closing_balancedb'] = indian_money_format(item['total_closing_balancedb'])
+            item['total_closing_balancecr'] = indian_money_format(item['total_closing_balancecr'])
+        elif item['total_closing_balancedb']: 
+            item['total_closing_balancedb'] = indian_money_format(item['total_closing_balancedb'])
+        else:
+            item['total_closing_balancecr'] = indian_money_format(item['total_closing_balancecr'])
+
     tc_diff=indian_money_format(tc_dif)
     td_diff=indian_money_format(td_dif)
     formated_total=indian_money_format(total)
@@ -17448,6 +17410,8 @@ def trialbalance_voucher_alter(request):
     comp = Companies.objects.get(id=t_id) 
     startdate = comp.fin_begin 
     day = startdate.strftime("%A")
+
+    voucher=Ledger_vouchers_new.objects.get(voucher=id)
 
     print(startdate,day)
     context={
