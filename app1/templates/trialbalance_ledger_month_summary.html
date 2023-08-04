@@ -45,7 +45,7 @@
               <td class="text-center text-white"></td>
 
               {% if i == month %}
-              <td class="text-center text-white">{{ledger.opening_blnc}} {{ledger.opening_blnc_type}}</td>
+              <td class="text-center text-white">{{ledger.current_blnc}} {{ledger.current_blnc_type}}</td>
               {% else %}
               <td class="text-center text-white"></td>
               {% endif %}
@@ -57,7 +57,7 @@
               <th class="text-white">Grand Total</th>
               <th class="text-center text-white"></th>
               <th class="text-center text-white"></th>
-              <th class="text-center text-white">{{ledger.opening_blnc}} {{ledger.opening_blnc_type}}</th>
+              <th class="text-center text-white">{{ledger.current_blnc}} {{ledger.current_blnc_type}}</th>
             </tr>
             
           </tbody>

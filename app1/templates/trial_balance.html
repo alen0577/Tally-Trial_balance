@@ -33,11 +33,19 @@
             <tr  class="trhover">                               
               <th class="text-white"><a href="{% url 'trialbalance_group_summary' i.group_name %}">{{i.group_name}}</a></th>
               
+              {% if i.total_closing_balancedb %}
               <th class="text-center text-white">{{i.total_closing_balancedb}}</th>
+              {% else %}
+              <th class="text-center text-white"></th>
+              {% endif %}
               
-              
-              
+              {% if i.total_closing_balancecr %}
               <th class="text-center text-white">{{i.total_closing_balancecr}}</th>
+              {% else %}
+              <th class="text-center text-white"></th>
+              {% endif %}
+              
+              
               
               
 

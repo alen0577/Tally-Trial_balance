@@ -45,19 +45,40 @@
             
           
             <tr>
-              <th colspan="4" class="text-white" style="text-align: end;border-bottom: none;">Opening Balance :</th>
-              <th class="text-center text-white">{{ sum2 }}</th>
-              <th class="text-center text-white">{{ sum1 }}</th>
+              <td colspan="4" class="text-white" style="text-align: end;border-bottom: none;">Opening Balance :</td>
+
+              {% if ledger.opening_blnc_type == 'Dr' %}
+              <th class="text-center text-white">{{ ledger.opening_blnc }}</th>
+              {% else %}
+              <th class="text-center text-white"></th>
+              {% endif %}
+
+              {% if ledger.opening_blnc_type == 'Cr' %}
+              <th class="text-center text-white">{{ ledger.opening_blnc }}</th>
+              {% else %}
+              <th class="text-center text-white"></th>
+              {% endif %}
+
             </tr>
             <tr>
-              <th colspan="4" class="text-white" style="text-align: end;border-top: none;">Current Total :</th>
+              <td colspan="4" class="text-white" style="text-align: end;border-top: none;">Current Total :</td>
               <th class="text-center text-white">{{ sum2 }}</th>
               <th class="text-center text-white" >{{ sum1 }}</th>
             </tr>
             <tr>
               <th colspan="4" class="text-white" style="text-align: end;">Closing  Balance :</th>
-              <th class="text-center text-white">{{ sum2 }}</th>
-              <th class="text-center text-white">{{ sum1 }}</th>
+              {% if ledger.current_blnc_type == 'Dr' %}
+              <th class="text-center text-white">{{ ledger.current_blnc }}</th>
+              {% else %}
+              <th class="text-center text-white"></th>
+              {% endif %}
+
+              {% if ledger.current_blnc_type == 'Cr' %}
+              <th class="text-center text-white">{{ ledger.current_blnc }}</th>
+              {% else %}
+              <th class="text-center text-white"></th>
+              {% endif %}
+
             </tr>
           </tbody>
         </table>

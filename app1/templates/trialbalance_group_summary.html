@@ -34,14 +34,14 @@
             <tr  class="trhover">                               
               <td class="text-white"><a href="{% url 'trialbalance_ledger_month_summary' i.id %}">{{i.name}}</a></td>
 
-              {% if i.opening_blnc_type == "Dr" %}
-              <td class="text-center text-white">{{i.opening_blnc}}</td>
+              {% if i.current_blnc_type == "Dr" %}
+              <td class="text-center text-white">{{i.current_blnc}}</td>
               {% else %}
               <td class="text-center text-white"></td>
               {% endif %}
 
-              {% if i.opening_blnc_type == "Cr" %}
-              <td class="text-center text-white">{{i.opening_blnc}}</td>
+              {% if i.current_blnc_type == "Cr" %}
+              <td class="text-center text-white">{{i.current_blnc}}</td>
               {% else %}
               <td class="text-center text-white"></td>
               {% endif %}

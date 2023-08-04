@@ -17202,8 +17202,11 @@ def trial_balance(request):
 
     for i in   grop_under_data:
         
-        if i['total_closing_balancedb']:
+        if i['total_closing_balancedb'] and i['total_closing_balancecr']: 
             t_debit += i['total_closing_balancedb']
+            t_credit += i['total_closing_balancecr']
+        elif i['total_closing_balancedb']: 
+            t_debit += i['total_closing_balancedb']    
         else:    
             t_credit += i['total_closing_balancecr']
             
@@ -17281,15 +17284,28 @@ def trialbalance_group_summary(request,pk):
     #find total of balances
     total_debit=0
     total_credit=0
+
+    db=tally_ledger.objects.filter(company_id=t_id,under=pk1,current_blnc_type='Dr').aggregate(total_balance=Sum('current_blnc'))
+    cr=tally_ledger.objects.filter(company_id=t_id,under=pk1,current_blnc_type='Cr').aggregate(total_balance=Sum('current_blnc'))
+    
+    print(db)
+    print(cr)
+
     for t in ledgers:
-        if t.opening_blnc_type == 'Dr':
-            total_debit+=t.opening_blnc
+        if t.current_blnc_type == 'Dr' and t.current_blnc_type == 'Cr':
+            total_debit+=t.current_blnc
+            total_credit+=t.current_blnc  
+        elif t.current_blnc_type == 'Dr':
+            total_debit+=t.current_blnc
         else:
-            total_credit+=t.opening_blnc    
+            total_credit+=t.current_blnc
+
+
+        print(total_debit,total_credit)  
 
     # convert to indian money format
     for i in ledgers:
-        i.opening_blnc=indian_money_format(i.opening_blnc)
+        i.current_blnc=indian_money_format(i.current_blnc)
        
 
     d_total=indian_money_format(total_debit)
@@ -17337,6 +17353,7 @@ def trialbalance_ledger_month_summary(request,pk):
     month=months[start_month_index]
 
     #convert to indian money format
+    ledger.current_blnc=indian_money_format(ledger.current_blnc)
     ledger.opening_blnc=indian_money_format(ledger.opening_blnc)
 
    
@@ -17388,8 +17405,15 @@ def trialbalance_ledger_vouchers(request,id,pk):
 
 
     ledger=tally_ledger.objects.get(id=id,company_id=t_id)
+
+
+    #convert to indian money format
+    ledger.current_blnc=indian_money_format(ledger.current_blnc)
+    ledger.opening_blnc=indian_money_format(ledger.opening_blnc)
+
     print(month,end_date)
     print(months_list)
+    print(ledger)
     context={
         'company':comp,
         'start_date':start_date,
@@ -17411,7 +17435,7 @@ def trialbalance_voucher_alter(request):
     startdate = comp.fin_begin 
     day = startdate.strftime("%A")
 
-    voucher=Ledger_vouchers_new.objects.get(voucher=id)
+    # voucher=Ledger_vouchers_new.objects.get(id=id)
 
     print(startdate,day)
     context={
