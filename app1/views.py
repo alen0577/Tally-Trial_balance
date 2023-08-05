@@ -43,6 +43,8 @@ from django.conf import settings
 import locale
 from collections import defaultdict
 from django.utils import timezone
+from calendar import month_name
+
 
 
 # Create your views here.
@@ -17352,7 +17354,39 @@ def trialbalance_ledger_month_summary(request,pk):
     table_months = months[start_month_index:] + months[:start_month_index]
     month=months[start_month_index]
 
+
+    vouchers=Ledger_vouchers_new.objects.filter(ledger=pk,company_id=t_id)
+
+    distinct_months = set()
+    for i in vouchers:
+        mon=i.date.month
+        month=month_name[mon]
+        distinct_months.add(month)
+        print(month)
+        print(distinct_months)
+    print(vouchers) 
+    month_set=list(distinct_months)
+    print(month_set)
+    group_data=[]
+
+    for group in month_set:
+       monthname=group
+       month_number = datetime.strptime(group, "%B").month
+       total_debit=Ledger_vouchers_new.objects.filter(ledger=pk,company_id=t_id,date__month=month_number).aggregate(total_balance=Sum('debit')) 
+       total_credit=Ledger_vouchers_new.objects.filter(ledger=pk,company_id=t_id,date__month=month_number).aggregate(total_balance=Sum('credit'))
+       group_data.append({
+        'name':monthname,
+        'db':total_debit['total_balance'],
+        'cr':total_credit['total_balance']
+       })
+       print(month_number)
+       print(total_debit)
+       print(total_credit)
+       print(monthname)
+       print(group_data)
+
     #convert to indian money format
+
     ledger.current_blnc=indian_money_format(ledger.current_blnc)
     ledger.opening_blnc=indian_money_format(ledger.opening_blnc)
 
@@ -17364,6 +17398,7 @@ def trialbalance_ledger_month_summary(request,pk):
         'ledger':ledger,
         'table_months':table_months,
         'month':month,
+        'group_data':group_data,
     }      
 
     return render(request,'trialbalance_ledger_month_summary.html',context)
