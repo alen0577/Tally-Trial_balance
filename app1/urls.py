@@ -932,7 +932,7 @@ urlpatterns = [
     path('trialbalance_group_summary/<str:pk>',views.trialbalance_group_summary,name='trialbalance_group_summary'),
     path('trialbalance_ledger_month_summary/<int:pk>',views.trialbalance_ledger_month_summary,name='trialbalance_ledger_month_summary'),
     path('trialbalance_ledger_vouchers/<int:id>/<str:pk>',views.trialbalance_ledger_vouchers,name='trialbalance_ledger_vouchers'),
-    path('trialbalance_voucher_alter',views.trialbalance_voucher_alter,name='trialbalance_voucher_alter'),
+    path('trialbalance_voucher_alter/<int:pk>',views.trialbalance_voucher_alter,name='trialbalance_voucher_alter'),
 
 
 

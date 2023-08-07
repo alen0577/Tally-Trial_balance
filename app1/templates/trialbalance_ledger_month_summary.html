@@ -38,26 +38,29 @@
               <td class="text-center text-white"></td>
               <th class="text-center text-white">{{ledger.opening_blnc}} {{ledger.opening_blnc_type}}</th>  
             </tr>
-            {% for i in table_months %}
-            {% for j in group_data %}
-            <tr class="trhover">                               
-              <td class="text-white"><a href="{% url 'trialbalance_ledger_vouchers' ledger.id i %}">{{i}}</a></td>
-              {% if i == j.name %}
-              <td class="text-center text-white">{{j.db}}</td>
-              <td class="text-center text-white">{{j.cr}}</td>
-              {% else %}
-              <td class="text-center text-white"></td>
-              <td class="text-center text-white"></td>
-              {% endif %}
+            
+            {% for i in table_data %}
+            <tr class="trhover">   
 
-              {% if i == month %}
-              <td class="text-center text-white">{{ledger.current_blnc}} {{ledger.current_blnc_type}}</td>
+              <td class="text-white"><a href="{% url 'trialbalance_ledger_vouchers' ledger.id i.name %}">{{i.name}}</a></td>
+
+              {% if i.db > 0 %}
+              <td class="text-center text-white">{{i.db}}</td>
               {% else %}
               <td class="text-center text-white"></td>
               {% endif %}
 
-            </tr>
-            {% endfor %}
+              {% if i.cr > 0 %}
+              <td class="text-center text-white">{{i.cr}}</td>
+              {% else %}
+              <td class="text-center text-white"></td>
+              {% endif %}
+
+              
+              <td class="text-center text-white">2000</td>
+            
+                
+            </tr>  
             {% endfor %}
           
             <tr>

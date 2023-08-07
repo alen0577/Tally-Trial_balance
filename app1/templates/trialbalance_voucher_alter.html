@@ -14,19 +14,16 @@
         </div> 
       </div>
       <div class="row d-flex mt-3 mb-3 " >
-        <div class="col-md-2 ">Voucher Type : {{voucher.type}}</div>
-        <div class="col-md-9 ">No : {{voucher.no}}</div>
-        <div class="col-md-1" style="text-transform:capitalize;">{{startdate  |date:'d-M-Y' }} {{day}}</div>
-        
-      </div>
-      <div class="row mb-2">
-        <div class="col">Account:{{voucher.account}}</div>
+        <div class="col-md-2 ">Voucher Type : {{voucher.voucher_type|capfirst}}</div>
+        <div class="col-md-8 ">No : {{voucher.voucher_no}}</div>
+        <div class="col-md-2" style="text-transform:capitalize;">{{startdate  |date:'d-M-Y' }} , {{day}}</div>
         
       </div>
       <div class="row mb-3">
-        <div class="col">Current Balance:{{voucher.closing_balance}}</div>
-
+        <div class="col">Account : {{voucher.account|capfirst}}</div>
+        
       </div>
+      
 
       <div class="table-responsive">
         <table class="table  table-bordered border-dark " style="background-color: rgba(33,57,77,255);color:#fff;">
@@ -42,13 +39,21 @@
           <tbody>
               
             <tr  class="trhover">                               
-              <td class="text-white">Test</td>
-              <td class="text-center text-white">10,000.00</td>
+              <td class="text-white">{{voucher.particulars}}</td>
+              {% if voucher.debit %}
+              <td class="text-center text-white">{{voucher.debit}}</td>
+              {% else %}
+              <td class="text-center text-white">{{voucher.credit}}</td>
+              {% endif %}
               
             </tr>
             <tr>
               <th colspan="1" class="text-white" style="text-align: end;">Total :</th>
-              <th class="text-center text-white">10,000.00</th>
+              {% if voucher.debit %}
+              <th class="text-center text-white">{{voucher.debit}}</th>
+              {% else %}
+              <th class="text-center text-white">{{voucher.credit}}</th>
+              {% endif %}
 
             </tr>
             

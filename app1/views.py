@@ -17357,19 +17357,20 @@ def trialbalance_ledger_month_summary(request,pk):
 
     vouchers=Ledger_vouchers_new.objects.filter(ledger=pk,company_id=t_id)
 
-    distinct_months = set()
+    #distinct months from voucher model
+    distinct_months = list()
     for i in vouchers:
         mon=i.date.month
         month=month_name[mon]
-        distinct_months.add(month)
-        print(month)
-        print(distinct_months)
-    print(vouchers) 
-    month_set=list(distinct_months)
-    print(month_set)
+        if month not in distinct_months:
+            distinct_months.append(month)
+        
+   
+   
+    #find total debit and credit for each distinct month
     group_data=[]
 
-    for group in month_set:
+    for group in distinct_months:
        monthname=group
        month_number = datetime.strptime(group, "%B").month
        total_debit=Ledger_vouchers_new.objects.filter(ledger=pk,company_id=t_id,date__month=month_number).aggregate(total_balance=Sum('debit')) 
@@ -17384,6 +17385,17 @@ def trialbalance_ledger_month_summary(request,pk):
        print(total_credit)
        print(monthname)
        print(group_data)
+    
+    #combine above two datas
+    table_data = []
+    for month in table_months:
+        month_data = next((item for item in group_data if item['name'] == month), None)
+        if month_data:
+            table_data.append(month_data)
+        else:
+            table_data.append({'name': month, 'db': 0.0, 'cr': 0.0})   
+    print(table_data)
+
 
     #convert to indian money format
 
@@ -17399,6 +17411,7 @@ def trialbalance_ledger_month_summary(request,pk):
         'table_months':table_months,
         'month':month,
         'group_data':group_data,
+        'table_data':table_data
     }      
 
     return render(request,'trialbalance_ledger_month_summary.html',context)
@@ -17434,17 +17447,91 @@ def trialbalance_ledger_vouchers(request,id,pk):
     
     first_day, last_day = get_first_and_last_date_of_month(month)
 
+    
+    month_number = datetime.strptime(month, "%B").month
+    vouchers=Ledger_vouchers_new.objects.filter(ledger=id,company_id=t_id,date__month=month_number)
+
+    td=0
+    tc=0
+    for i in vouchers:
+        if i.debit:
+            td+=int(i.debit)
+        if i.credit:    
+            tc+=int(i.credit)
+        print(type(i.debit))
+
+    print(td,tc)
     print(first_day, last_day)
-
-
+    print(month_number)
+    print(vouchers)
 
 
     ledger=tally_ledger.objects.get(id=id,company_id=t_id)
+
+    #closing balance of each month
+    deb=cre=clbalance=0
+    cl_balance=[]
+
+    if ledger.opening_blnc_type == 'Dr':
+        deb=ledger.opening_blnc + td
+        cre=tc
+
+        if deb> cre:
+            clbalance=deb-cre
+            ctype='Dr'
+            cl_balance.append({
+                'closing_balance':clbalance,
+                'balance_type':ctype
+            })
+
+        else:
+            clbalance=cre-deb
+            ctype='Cr'
+            cl_balance.append({
+                'closing_balance':clbalance,
+                'balance_type':ctype
+            })
+    else: 
+        cre=ledger.opening_blnc+tc
+        deb=td
+        if cre>deb:
+            clbalance=cre-deb
+            ctype='Cr'
+            cl_balance.append({
+                'closing_balance':clbalance,
+                'balance_type':ctype
+            })
+        else:
+            clbalance=deb-cre
+            ctype='Dr'
+            cl_balance.append({
+                'closing_balance':clbalance,
+                'balance_type':ctype
+            })
+
+
+
+    print(cl_balance)
+
+
 
 
     #convert to indian money format
     ledger.current_blnc=indian_money_format(ledger.current_blnc)
     ledger.opening_blnc=indian_money_format(ledger.opening_blnc)
+
+    for i in vouchers:
+        if i.debit:
+            i.debit=indian_money_format(int(i.debit))
+        if i.credit:    
+            i.credit=indian_money_format(int(i.credit))
+
+    td=indian_money_format(td)
+    tc=indian_money_format(tc)
+
+    for i in cl_balance:
+        print(i)
+        i['closing_balance']=indian_money_format(i['closing_balance'])
 
     print(month,end_date)
     print(months_list)
@@ -17455,22 +17542,32 @@ def trialbalance_ledger_vouchers(request,id,pk):
         'ledger':ledger,
         'first_day':first_day,
         'last_day':last_day,
+        'vouchers':vouchers,
+        'td':td,
+        'tc':tc,
+        'cl_balance':cl_balance
     }      
 
     return render(request,'trialbalance_ledger_vouchers.html',context)  
 
 
-def trialbalance_voucher_alter(request):
+def trialbalance_voucher_alter(request,pk):
     if 't_id' in request.session:
         if request.session.has_key('t_id'):
             t_id = request.session['t_id']
         else:
             return redirect('/')
     comp = Companies.objects.get(id=t_id) 
-    startdate = comp.fin_begin 
-    day = startdate.strftime("%A")
+    
 
-    # voucher=Ledger_vouchers_new.objects.get(id=id)
+    voucher=Ledger_vouchers_new.objects.get(id=pk)
+    startdate = voucher.date 
+    day = startdate.strftime("%A")
+    # convert to indian money format
+    if voucher.debit:
+        voucher.debit=indian_money_format(int(voucher.debit))
+    if voucher.credit:
+        voucher.credit=indian_money_format(int(voucher.credit))
 
     print(startdate,day)
     context={
@@ -17478,6 +17575,7 @@ def trialbalance_voucher_alter(request):
         'startdate':startdate,
         'day':day,
         'ledger':ledger,
+        'voucher':voucher
     }      
 
     return render(request,'trialbalance_voucher_alter.html',context)  

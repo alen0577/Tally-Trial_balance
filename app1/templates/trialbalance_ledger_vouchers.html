@@ -33,9 +33,63 @@
             
           </thead>
           <tbody>
-              
+            
+            {% if vouchers %}
+            {% for i in vouchers %}
             <tr  class="trhover">                               
-              <td class="text-white"><a href="{% url 'trialbalance_voucher_alter' %}">test</a></td>
+              <td class="text-center text-white">{{i.date}}</td>
+              <td class="text-center text-white"><a href="{% url 'trialbalance_voucher_alter' i.id %}">{{i.particulars}}</a></td>
+              <td class="text-center text-white">{{i.voucher_type}}</td>
+              <td class="text-center text-white">{{i.voucher_no}}</td>
+              <td class="text-center text-white">{{i.debit}}</td>
+              <td class="text-center text-white">{{i.credit}}</td>
+            </tr>
+            {% endfor %}
+          
+            <tr>
+              <td colspan="4" class="text-white" style="text-align: end;border-bottom: none;">Opening Balance :</td>
+
+              {% if ledger.opening_blnc_type == 'Dr' %}
+              <th class="text-center text-white">{{ ledger.opening_blnc }}</th>
+              {% else %}
+              <th class="text-center text-white"></th>
+              {% endif %}
+
+              {% if ledger.opening_blnc_type == 'Cr' %}
+              <th class="text-center text-white">{{ ledger.opening_blnc }}</th>
+              {% else %}
+              <th class="text-center text-white"></th>
+              {% endif %}
+
+            </tr>
+            <tr>
+              <td colspan="4" class="text-white" style="text-align: end;border-top: none;">Current Total :</td>
+              <th class="text-center text-white">{{ td }}</th>
+              <th class="text-center text-white" >{{ tc }}</th>
+            </tr>
+
+            {% for i in cl_balance %}
+            <tr>
+              <th colspan="4" class="text-white" style="text-align: end;">Closing  Balance :</th>
+              {% if i.balance_type == 'Dr' %}
+              <th class="text-center text-white">{{ i.closing_balance }}</th>
+              {% else %}
+              <th class="text-center text-white"></th>
+              {% endif %}
+
+              {% if i.balance_type == 'Cr' %}
+              <th class="text-center text-white">{{ i.closing_balance }}</th>
+              {% else %}
+              <th class="text-center text-white"></th>
+              {% endif %}
+
+            </tr>
+            {% endfor %}
+
+            {% else %}
+
+            <tr  class="trhover">                               
+              <td class="text-center text-white"></td>
               <td class="text-center text-white"></td>
               <td class="text-center text-white"></td>
               <td class="text-center text-white"></td>
@@ -62,9 +116,11 @@
             </tr>
             <tr>
               <td colspan="4" class="text-white" style="text-align: end;border-top: none;">Current Total :</td>
-              <th class="text-center text-white">{{ sum2 }}</th>
-              <th class="text-center text-white" >{{ sum1 }}</th>
+              <th class="text-center text-white"></th>
+              <th class="text-center text-white" ></th>
             </tr>
+
+            
             <tr>
               <th colspan="4" class="text-white" style="text-align: end;">Closing  Balance :</th>
               {% if ledger.current_blnc_type == 'Dr' %}
@@ -79,7 +135,14 @@
               <th class="text-center text-white"></th>
               {% endif %}
 
+              
+
             </tr>
+            
+
+
+            {% endif %}
+
           </tbody>
         </table>
       </div>
