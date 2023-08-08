@@ -14,7 +14,7 @@
         </div> 
       </div>
       <div class="row d-flex mt-3 mb-3 " >
-        <div class="col-md-10 ">Ledger : {{ledger.name}}</div>
+        <div class="col-md-10 ">Ledger : <b>{{ledger.name}}</b></div>
         <div class="col-md-2" style="font-weight:600 ;text-transform:capitalize;">{{first_day  |date:'d-M-Y'}} to {{last_day  |date:'d-M-Y'}}</div>
         
       </div>
@@ -23,10 +23,10 @@
         <table class="table  table-bordered border-dark " style="background-color: rgba(33,57,77,255);color:#fff;">
           <thead>
             <tr>
-              <th  class="text-center text-white">Date</th>
+              <td  class="text-center text-white">Date</td>
               <th  class="text-center text-white">Particulars</th>
-              <th  class="text-center text-white">Vch Type</th>
-              <th  class="text-center text-white">Vch No</th>
+              <td  class="text-center text-white">Vch Type</td>
+              <td  class="text-center text-white">Vch No</td>
               <th  class="text-center text-white">Debit</th>
               <th  class="text-center text-white">Credit</th>
             </tr>

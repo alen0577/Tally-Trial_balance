@@ -31,7 +31,7 @@
             </tr>
           </thead>
           <tbody>
-              
+            {% if vouchers %}  
             <tr>                               
               <td class="text-white" style="font-family: cursive;">Opening Balance</td>
               <td class="text-center text-white"></td>
@@ -44,20 +44,62 @@
 
               <td class="text-white"><a href="{% url 'trialbalance_ledger_vouchers' ledger.id i.name %}">{{i.name}}</a></td>
 
-              {% if i.db > 0 %}
+              {% if i.db %}
               <td class="text-center text-white">{{i.db}}</td>
               {% else %}
               <td class="text-center text-white"></td>
               {% endif %}
 
-              {% if i.cr > 0 %}
+              {% if i.cr %}
               <td class="text-center text-white">{{i.cr}}</td>
               {% else %}
               <td class="text-center text-white"></td>
               {% endif %}
 
+              {% if i.closing_balance %}
+              <td class="text-center text-white">{{i.closing_balance}} {{i.balance_type}}</td>
+              {% else %}
+              <td class="text-center text-white"></td>
+              {% endif %}
+            
+                
+            </tr>  
+            {% endfor %}
+          
+            <tr>
+              <th class="text-white">Grand Total</th>
+              <th class="text-center text-white">{{td}}</th>
+              <th class="text-center text-white">{{tc}}</th>
+              <th class="text-center text-white">{{ledger.current_blnc}} {{ledger.current_blnc_type}}</th>
+            </tr>
+            
+            {% else %}
+
+            <tr>                               
+              <td class="text-white" style="font-family: cursive;">Opening Balance</td>
+              <td class="text-center text-white"></td>
+              <td class="text-center text-white"></td>
+              <th class="text-center text-white">{{ledger.opening_blnc}} {{ledger.opening_blnc_type}}</th>  
+            </tr>
+            
+            {% for i in table_months %}
+            <tr class="trhover">   
+
+              <td class="text-white"><a href="{% url 'trialbalance_ledger_vouchers' ledger.id i %}">{{i}}</a></td>
+
               
-              <td class="text-center text-white">2000</td>
+              <td class="text-center text-white"></td>
+              
+
+              
+              <td class="text-center text-white"></td>
+              
+              {% if i == monthstart %}
+              <td class="text-center text-white">{{ledger.current_blnc}} {{ledger.current_blnc_type}}</td>
+              {% else %}
+              <td class="text-center text-white"></td>
+              {% endif %}
+              
             
                 
             </tr>  
@@ -69,6 +111,8 @@
               <th class="text-center text-white"></th>
               <th class="text-center text-white">{{ledger.current_blnc}} {{ledger.current_blnc_type}}</th>
             </tr>
+
+            {% endif %}
             
           </tbody>
         </table>

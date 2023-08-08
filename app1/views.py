@@ -17184,8 +17184,7 @@ def trial_balance(request):
         total_closing_balancedb=tally_ledger.objects.filter(company_id=t_id,under=grpname,current_blnc_type='Dr').aggregate(total_balance=Sum('current_blnc'))
         total_closing_balancecr=tally_ledger.objects.filter(company_id=t_id,under=grpname,current_blnc_type='Cr').aggregate(total_balance=Sum('current_blnc'))
        
-        print(total_closing_balancedb)
-        print(total_closing_balancecr)
+        
         grop_under_data.append({
             'group_name':group_name,
             'total_closing_balancedb':total_closing_balancedb['total_balance'],
@@ -17225,7 +17224,7 @@ def trial_balance(request):
 
 
    
-    print(grop_under_data)
+    
 
     # for converting the number to indian money format
 
@@ -17290,8 +17289,7 @@ def trialbalance_group_summary(request,pk):
     db=tally_ledger.objects.filter(company_id=t_id,under=pk1,current_blnc_type='Dr').aggregate(total_balance=Sum('current_blnc'))
     cr=tally_ledger.objects.filter(company_id=t_id,under=pk1,current_blnc_type='Cr').aggregate(total_balance=Sum('current_blnc'))
     
-    print(db)
-    print(cr)
+    
 
     for t in ledgers:
         if t.current_blnc_type == 'Dr' and t.current_blnc_type == 'Cr':
@@ -17303,7 +17301,7 @@ def trialbalance_group_summary(request,pk):
             total_credit+=t.current_blnc
 
 
-        print(total_debit,total_credit)  
+         
 
     # convert to indian money format
     for i in ledgers:
@@ -17352,9 +17350,9 @@ def trialbalance_ledger_month_summary(request,pk):
     start_month_index = (startdate.month - 2) % 12
 
     table_months = months[start_month_index:] + months[:start_month_index]
-    month=months[start_month_index]
-
-
+    
+    monthstart=table_months[0]
+    
     vouchers=Ledger_vouchers_new.objects.filter(ledger=pk,company_id=t_id)
 
     #distinct months from voucher model
@@ -17367,7 +17365,7 @@ def trialbalance_ledger_month_summary(request,pk):
         
    
    
-    #find total debit and credit for each distinct month
+    #find total debit, credit,closing balance and its type for each distinct month
     group_data=[]
 
     for group in distinct_months:
@@ -17375,16 +17373,67 @@ def trialbalance_ledger_month_summary(request,pk):
        month_number = datetime.strptime(group, "%B").month
        total_debit=Ledger_vouchers_new.objects.filter(ledger=pk,company_id=t_id,date__month=month_number).aggregate(total_balance=Sum('debit')) 
        total_credit=Ledger_vouchers_new.objects.filter(ledger=pk,company_id=t_id,date__month=month_number).aggregate(total_balance=Sum('credit'))
-       group_data.append({
-        'name':monthname,
-        'db':total_debit['total_balance'],
-        'cr':total_credit['total_balance']
-       })
-       print(month_number)
-       print(total_debit)
-       print(total_credit)
-       print(monthname)
-       print(group_data)
+       
+       
+       deb=cre=clbalance=0
+       if ledger.opening_blnc_type == 'Dr':
+        deb=ledger.opening_blnc + total_debit['total_balance']
+        cre=total_credit['total_balance']
+
+        if deb> cre:
+            clbalance=deb-cre
+            ctype='Dr'
+            group_data.append({
+                'name':monthname,
+                'db':total_debit['total_balance'],
+                'cr':total_credit['total_balance'],
+                'closing_balance':clbalance,
+                'balance_type':ctype
+            })
+
+        else:
+            clbalance=cre-deb
+            ctype='Cr'
+            group_data.append({
+                'name':monthname,
+                'db':total_debit['total_balance'],
+                'cr':total_credit['total_balance'],
+                'closing_balance':clbalance,
+                'balance_type':ctype
+            })
+       else:
+        cre=ledger.opening_blnc+total_credit['total_balance']
+        deb=total_debit['total_balance']
+        if cre>deb:
+            clbalance=cre-deb
+            ctype='Cr'
+            group_data.append({
+                'name':monthname,
+                'db':total_debit['total_balance'],
+                'cr':total_credit['total_balance'],
+                'closing_balance':clbalance,
+                'balance_type':ctype
+            })
+        else:
+            clbalance=deb-cre
+            ctype='Dr'
+            group_data.append({
+                'name':monthname,
+                'db':total_debit['total_balance'],
+                'cr':total_credit['total_balance'],
+                'closing_balance':clbalance,
+                'balance_type':ctype
+            })
+
+    td=tc=0
+    for i in vouchers:
+        if i.debit:
+            td+=int(i.debit)
+        if i.credit:
+            tc+=int(i.credit)    
+
+
+    
     
     #combine above two datas
     table_data = []
@@ -17393,14 +17442,24 @@ def trialbalance_ledger_month_summary(request,pk):
         if month_data:
             table_data.append(month_data)
         else:
-            table_data.append({'name': month, 'db': 0.0, 'cr': 0.0})   
-    print(table_data)
+            table_data.append({'name': month, 'db': 0.0, 'cr': 0.0,'closing_balance':0.0,'balance_type':None})   
+   
 
 
     #convert to indian money format
 
     ledger.current_blnc=indian_money_format(ledger.current_blnc)
     ledger.opening_blnc=indian_money_format(ledger.opening_blnc)
+    td=indian_money_format(td)
+    tc=indian_money_format(tc)
+    for i in table_data:
+        if i['db']:
+            i['db']=indian_money_format(i['db'])
+        if i['cr']:
+            i['cr']=indian_money_format(i['cr']) 
+        if i['closing_balance']:
+            i['closing_balance']=indian_money_format(i['closing_balance'])       
+            
 
    
     context={
@@ -17409,9 +17468,12 @@ def trialbalance_ledger_month_summary(request,pk):
         'pk':pk,
         'ledger':ledger,
         'table_months':table_months,
-        'month':month,
+        'monthstart':monthstart,
         'group_data':group_data,
-        'table_data':table_data
+        'table_data':table_data,
+        'td':td,
+        'tc':tc,
+        'vouchers':vouchers,
     }      
 
     return render(request,'trialbalance_ledger_month_summary.html',context)
@@ -17458,13 +17520,9 @@ def trialbalance_ledger_vouchers(request,id,pk):
             td+=int(i.debit)
         if i.credit:    
             tc+=int(i.credit)
-        print(type(i.debit))
+        
 
-    print(td,tc)
-    print(first_day, last_day)
-    print(month_number)
-    print(vouchers)
-
+    
 
     ledger=tally_ledger.objects.get(id=id,company_id=t_id)
 
@@ -17511,7 +17569,7 @@ def trialbalance_ledger_vouchers(request,id,pk):
 
 
 
-    print(cl_balance)
+    
 
 
 
@@ -17530,12 +17588,10 @@ def trialbalance_ledger_vouchers(request,id,pk):
     tc=indian_money_format(tc)
 
     for i in cl_balance:
-        print(i)
+       
         i['closing_balance']=indian_money_format(i['closing_balance'])
 
-    print(month,end_date)
-    print(months_list)
-    print(ledger)
+    
     context={
         'company':comp,
         'start_date':start_date,
@@ -17569,7 +17625,7 @@ def trialbalance_voucher_alter(request,pk):
     if voucher.credit:
         voucher.credit=indian_money_format(int(voucher.credit))
 
-    print(startdate,day)
+    
     context={
         'company':comp,
         'startdate':startdate,
@@ -17580,4 +17636,3 @@ def trialbalance_voucher_alter(request,pk):
 
     return render(request,'trialbalance_voucher_alter.html',context)  
              
-
