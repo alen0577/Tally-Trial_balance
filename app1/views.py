@@ -17167,6 +17167,7 @@ def trial_balance(request):
             return redirect('/')
     comp = Companies.objects.get(id=t_id) 
     startdate = comp.fin_begin 
+    enddate= comp.fin_end
     ledgers = tally_ledger.objects.filter(company_id=t_id)
     
     # fetch distinct values of group_under
@@ -17250,6 +17251,7 @@ def trial_balance(request):
 
         'company':comp,
         'startdate':startdate,
+        'enddate':enddate,
         'ledgers':ledgers,
         'grop_under_data':grop_under_data,
         't_debit':t_debit,
@@ -17275,6 +17277,7 @@ def trialbalance_group_summary(request,pk):
             return redirect('/')
     comp = Companies.objects.get(id=t_id) 
     startdate = comp.fin_begin 
+    enddate= comp.fin_end
     
     words=pk.split()
     pk1 = "_".join(words)
@@ -17316,6 +17319,7 @@ def trialbalance_group_summary(request,pk):
     context={
         'company':comp,
         'startdate':startdate,
+        'enddate':enddate,
         'pk':pk,
         'ledgers':ledgers,
         'total_debit':total_debit,
@@ -17337,6 +17341,7 @@ def trialbalance_ledger_month_summary(request,pk):
             return redirect('/')
     comp = Companies.objects.get(id=t_id) 
     startdate = comp.fin_begin
+    enddate= comp.fin_end
     today=date.today()
     
     
@@ -17465,6 +17470,7 @@ def trialbalance_ledger_month_summary(request,pk):
     context={
         'company':comp,
         'startdate':startdate,
+        'enddate':enddate,
         'pk':pk,
         'ledger':ledger,
         'table_months':table_months,
