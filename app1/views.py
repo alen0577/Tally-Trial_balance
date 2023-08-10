@@ -17190,11 +17190,13 @@ def trial_balance(request):
             'group_name':group_name,
             'total_closing_balancedb':total_closing_balancedb['total_balance'],
             'total_closing_balancecr':total_closing_balancecr['total_balance'],
+            'name':grpname,
             
         })
 
     
-    
+    print(grop_under_data)
+    print(distinct_group)
     t_debit=0
     t_credit=0
     tc_dif=0
@@ -17278,19 +17280,16 @@ def trialbalance_group_summary(request,pk):
     comp = Companies.objects.get(id=t_id) 
     startdate = comp.fin_begin 
     enddate= comp.fin_end
+    grp=pk.replace('_', ' ')
     
-    words=pk.split()
-    pk1 = "_".join(words)
-    
-    
-    ledgers=tally_ledger.objects.filter(company_id=t_id,under=pk1)
+    ledgers=tally_ledger.objects.filter(company_id=t_id,under=pk)
 
     #find total of balances
     total_debit=0
     total_credit=0
 
-    db=tally_ledger.objects.filter(company_id=t_id,under=pk1,current_blnc_type='Dr').aggregate(total_balance=Sum('current_blnc'))
-    cr=tally_ledger.objects.filter(company_id=t_id,under=pk1,current_blnc_type='Cr').aggregate(total_balance=Sum('current_blnc'))
+    db=tally_ledger.objects.filter(company_id=t_id,under=pk,current_blnc_type='Dr').aggregate(total_balance=Sum('current_blnc'))
+    cr=tally_ledger.objects.filter(company_id=t_id,under=pk,current_blnc_type='Cr').aggregate(total_balance=Sum('current_blnc'))
     
     
 
@@ -17320,7 +17319,7 @@ def trialbalance_group_summary(request,pk):
         'company':comp,
         'startdate':startdate,
         'enddate':enddate,
-        'pk':pk,
+        'grp':grp,
         'ledgers':ledgers,
         'total_debit':total_debit,
         'total_credit':total_credit,
