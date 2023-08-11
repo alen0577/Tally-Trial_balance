@@ -17195,8 +17195,7 @@ def trial_balance(request):
         })
 
     
-    print(grop_under_data)
-    print(distinct_group)
+   
     t_debit=0
     t_credit=0
     tc_dif=0
